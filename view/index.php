@@ -33,6 +33,8 @@ $filter = [];
 
 }
 
+
+
 echo '<ul>';
 foreach ($cursor as $user){
  echo '<li>'.$user->nom.'</li>';
@@ -43,9 +45,9 @@ echo '<table>';
 foreach ($line as $date) {
     echo '<tr>';
     $timeStamp = strtotime($date->date);
-    $formatted_date = date('d/m/y', $timeStamp);
+    
 
-    echo '<td>'.$formatted_date.'</td>';
+    echo '<td>'.$timeStamp.'</td>';
 
    
     echo '</tr>';
