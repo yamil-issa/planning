@@ -20,12 +20,14 @@
 require '../model/connection.php';
 
 try {
-$filter = [];
+ $filter = [];
  $option = [];
  $read = new MongoDB\Driver\Query($filter, $option);
+
+ $query = new MongoDB\Driver\Query([], ['limit' => 52]);
  //Exécution de la requête
  $cursor = $manager->executeQuery('planning.users', $read);
- $line = $manager->executeQuery('planning.dates', $read);
+ $line = $manager->executeQuery('planning.dates', $query);
 
 }catch (MongoDB\Driver\Exception\Exception $e) {
     echo "Probleme! : ".$e->getMessage();
@@ -34,27 +36,21 @@ $filter = [];
 }
 
 
-
 echo '<ul>';
 foreach ($cursor as $user){
  echo '<li>'.$user->nom.'</li>';
 }
 echo '</ul>';
 
-echo '<table>';
-foreach ($line as $date) {
-    echo '<tr>';
-    $timeStamp = strtotime($date->date);
-    
+foreach ($line as $document) {
+    $timestamp = strtotime($document->start_date);
+    $date = date('d/m/Y', $timestamp);
 
-    echo '<td>'.$timeStamp.'</td>';
+    echo '<ul>
+    <li>'.$date.'</li>
+    </ul>';
+}
 
-   
-    echo '</tr>';
-
-};
-
-echo '</table>'
 
 
 
