@@ -59,6 +59,10 @@ $options = array_map(function ($users_tab) {
 }, $users_tab);
 $select = "<select>" . implode("", $options) . "</select>";
 
+?>
+<form>
+
+<?php
 
 foreach ($line as $document) {
     $timestamp = strtotime($document->start_date);
@@ -69,4 +73,5 @@ foreach ($line as $document) {
      <li><?=$date ?>&nbsp;<?=$select ?></li>
     </ul>
 <?php } ?>
-
+<input type='submit' value='valider le planning'>
+</form>
