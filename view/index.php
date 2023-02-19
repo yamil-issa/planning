@@ -36,22 +36,32 @@ try {
 }
 
 
-echo '<ul>';
-foreach ($cursor as $user){
- echo '<li>'.$user->nom.'</li>';
-}
-echo '</ul>';
+?>
+
+<select class="form-select" name="type" id="ty">
+<option value="nobody">personne</option>
+<?php
+        foreach ($cursor as $user) { 
+            $user_name = $user->nom;
+            $id_user = $user->_id;
+        ?>
+    <option value='<?= $id_user ?>'><?= $user_name ?></option>
+    <?php } ?>
+</select>
+
+
+<?php
+
 
 foreach ($line as $document) {
     $timestamp = strtotime($document->start_date);
     $date = date('d/m/Y', $timestamp);
 
     echo '<ul>
-    <li>'.$date.'</li>
+    <li>'.$date.' </li>
     </ul>';
 }
 
-
-
+//echo '<p>Statistiques</p>'
 
 ?>
