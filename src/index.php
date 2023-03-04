@@ -61,6 +61,7 @@ foreach ($cursor as $user) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
+    
     // get dates and corresponding user ids from $_POST['users']
     $users = $_POST['users'];
 
