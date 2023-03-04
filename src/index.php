@@ -12,8 +12,6 @@
         Planning
     </h1>
     <script src="../js/app.js"></script>
-</body>
-</html>
 
 
 
@@ -50,7 +48,7 @@ try {
     $query = new MongoDB\Driver\Query($dateFilter, ['limit' => 365]);
     //Exécution des requêtes
     $cursor = $manager->executeQuery('planning.users', $read);
-    $line = $manager->executeQuery('planning.dates', $query)->toArray();;
+    $line = $manager->executeQuery('planning.dates', $query);
 } catch (MongoDB\Driver\Exception\Exception $e) {
     echo "Probleme! : ".$e->getMessage();
     exit();
@@ -92,17 +90,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
             ['multi' => true]
         );
 
-        // construct update query to add date to corresponding user's 'dates' array
         $updateQuery = ['$addToSet' => ['dates' => $date]];
 
-        // add update query to bulk write operations
         $bulkWrite->update(
-            $userFilter, // filter to select the corresponding user
-            $updateQuery // update query to add the date to the user's 'dates' array
+            $userFilter, 
+            $updateQuery 
         );
     }
 
-    // execute bulk write operations to update user documents in MongoDB database
+    
     $manager->executeBulkWrite('planning.users', $bulkWrite);
 
     header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -130,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
    <input type="hidden" name="selectedYear" id="selectedYear" value="2023">
 
 
-<table style="border: 1px solid black; text-align: center;">
+<table>
     <tbody>
         <?php
         $counter = 0;
@@ -149,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
                 <tr>
             <?php endif; ?>
             
-            <td style="border: 1px solid black;">
+            <td>
                 <input type="hidden" name="td_dates[]" value="<?= $date ?>"><?= $date ?>
                 <select name="users[<?= $date ?>]" id="users">
                     <option value="personne" <?= $selected_user === 'personne' ? 'selected' : '' ?>>Personne</option>
@@ -174,3 +170,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
      <input name="submit-btn" id="submit-btn" type='submit' value='valider le planning'>
   
 </form>
+<?php include('stat.php')?>
+</body>
+</html>
