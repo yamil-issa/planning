@@ -1,6 +1,8 @@
 <?php
 ob_start();
-require '../model/connection.php';
+session_start();
+if($_SESSION["loggedin"]){
+    require '../model/connection.php';
 
 
 try {
@@ -51,6 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
 
     foreach ($users as $date => $userId) {
         if ($userId === 'personne') {
+            // remove the date from any other user that currently has it assigned
+            $updateQuery = ['$pull' => ['dates' => $date]];
+            $bulkWrite->update(
+                ['dates' => $date],
+                $updateQuery,
+                ['multi' => true]
+            );
             continue;
         }
         // retrieve user document to check if the date is already assigned
@@ -62,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
             continue;
         }
 
-        // remove the date from any other user that currently has it assigned
         $updateQuery = ['$pull' => ['dates' => $date]];
         $bulkWrite->update(
             ['dates' => $date],
@@ -100,11 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
     <h1>
         Planning
     </h1>
-    <script src="../js/app.js"></script>
 
-
-
-
+<button id="logout_btn" type="button" class="">Se deconnecter</button>
 <form method="POST" action="">
    <select class="form-select" name="years" id="years_select" onchange="document.getElementById('selectedYear').value=this.value; this.form.submit();">
      <option value="2023" <?php if ($selected_year === '2023') {
@@ -170,3 +175,9 @@ foreach ($line as $document) {
 <?php include('stat.php')?>
 </body>
 </html>
+
+<?php 
+}else {
+    header("location: login.php");
+}
+?>
