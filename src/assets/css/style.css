@@ -1,3 +1,9 @@
+h1 {
+  margin-left: 44%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
 table {
     border-collapse: collapse;
     margin: auto;
@@ -9,3 +15,17 @@ td {
   border: 1px solid black;
 }
   
+#years_select {
+  margin-left: 47%;
+  margin-bottom: 2%;
+  width: fit-content;
+}
+
+#submit-btn {
+  margin-top: 2%;
+  margin-left: 45%;
+}
+
+.stat-container {
+  margin-left: 10%;
+}

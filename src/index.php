@@ -1,23 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <title>planning</title>
-</head>
-<body>
-    <h1>
-        Planning
-    </h1>
-    <script src="../js/app.js"></script>
-
-
-
 <?php
+ob_start();
 require '../model/connection.php';
-
 
 
 try {
@@ -46,7 +29,7 @@ try {
     $read = new MongoDB\Driver\Query($filter, $option);
 
     $query = new MongoDB\Driver\Query($dateFilter, ['limit' => 365]);
-    //Exécution des requêtes
+
     $cursor = $manager->executeQuery('planning.users', $read);
     $line = $manager->executeQuery('planning.dates', $query);
 } catch (MongoDB\Driver\Exception\Exception $e) {
@@ -61,14 +44,11 @@ foreach ($cursor as $user) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
-    
-    // get dates and corresponding user ids from $_POST['users']
     $users = $_POST['users'];
 
-    // create BulkWrite instance for updating user documents
-    $bulkWrite = new MongoDB\Driver\BulkWrite;
+    // create BulkWrite
+    $bulkWrite = new MongoDB\Driver\BulkWrite();
 
-    // iterate over each user in $_POST['users']
     foreach ($users as $date => $userId) {
         if ($userId === 'personne') {
             continue;
@@ -78,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
         $userQuery = new MongoDB\Driver\Query($userFilter);
         $userDocument = current($manager->executeQuery('planning.users', $userQuery)->toArray());
 
-        // if the user already has the date assigned, don't do anything
         if (in_array($date, $userDocument->dates)) {
             continue;
         }
@@ -94,23 +73,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
         $updateQuery = ['$addToSet' => ['dates' => $date]];
 
         $bulkWrite->update(
-            $userFilter, 
-            $updateQuery 
+            $userFilter,
+            $updateQuery
         );
     }
 
-    
+
     $manager->executeBulkWrite('planning.users', $bulkWrite);
 
     header('Location: ' . $_SERVER['REQUEST_URI']);
     exit;
 }
 
-
 ?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <title>planning</title>
+</head>
+<body>
+    <h1>
+        Planning
+    </h1>
+    <script src="../js/app.js"></script>
+
+
+
 
 <form method="POST" action="">
-   <select name="years" id="years" onchange="document.getElementById('selectedYear').value=this.value; this.form.submit();">
+   <select class="form-select" name="years" id="years_select" onchange="document.getElementById('selectedYear').value=this.value; this.form.submit();">
      <option value="2023" <?php if ($selected_year === '2023') {
          echo 'selected';
      } ?>>2023</option>
@@ -131,17 +127,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
     <tbody>
         <?php
         $counter = 0;
-        foreach ($line as $document) {
-            $timestamp = strtotime($document->start_date);
-            $date = date('d/m/Y', $timestamp);
-            $selected_user = '';
-            foreach ($users_tab as $user) {
-                if (in_array($date, $user->dates)) {
-                    $selected_user = $user->_id;
-                    break;
-                }
-            }
-            ?>
+foreach ($line as $document) {
+    $timestamp = strtotime($document->start_date);
+    $date = date('d/m/Y', $timestamp);
+    $selected_user = '';
+    foreach ($users_tab as $user) {
+        if (in_array($date, $user->dates)) {
+            $selected_user = $user->_id;
+            break;
+        }
+    }
+    ?>
             <?php if ($counter % 4 == 0): ?>
                 <tr>
             <?php endif; ?>
@@ -161,14 +157,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
             <?php endif; ?>
             
             <?php
-            $counter++;
-        }
-        ?>
+    $counter++;
+}
+?>
     </tbody>
 </table>
 
 
-     <input name="submit-btn" id="submit-btn" type='submit' value='valider le planning'>
+     <input name="submit-btn" class="btn btn-primary" id="submit-btn" type='submit' value='valider le planning'>
   
 </form>
 <?php include('stat.php')?>
