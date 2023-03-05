@@ -1,6 +1,6 @@
 {
     "require": {
-        "mongodb/mongodb":"1.12.*",
+        "mongodb/mongodb":"^1.15",
         "ext-mongodb": "*"
     }
 }
