@@ -10,11 +10,7 @@ try {
     $option = [];
 
 
-    if (isset($_POST['selectedYear'])) {
-        $selected_year = $_POST['selectedYear'];
-    } else {
-        $selected_year = "2023";
-    };
+    $selected_year = isset($_POST['years']) ? $_POST['years'] : '2023';
 
 
 
@@ -109,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
         Planning
     </h1>
 
-<button id="logout_btn" type="button" class="">Se deconnecter</button>
+<button id="logout_btn" type="button" class="btn btn-danger" >Se deconnecter</button>
 <form method="POST" action="">
    <select class="form-select" name="years" id="years_select" onchange="document.getElementById('selectedYear').value=this.value; this.form.submit();">
      <option value="2023" <?php if ($selected_year === '2023') {
@@ -125,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-btn'])) {
          echo 'selected';
      } ?>>2026</option>
    </select>
-   <input type="hidden" name="selectedYear" id="selectedYear" value="2023">
+   <input type="hidden" name="selectedYear" id="selectedYear" value="<?=$selected_year?>">
 
 
 <table>
